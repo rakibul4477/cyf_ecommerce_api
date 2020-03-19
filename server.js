@@ -24,13 +24,15 @@ app.get("/suppliers", function(req, res) {
     });
 });
 
-app.get("/products", function(req, res) {
-    pool.query('select products.product_name, supplier_name from products join suppliers on products.supplier_id = suppliers.id', 
-    (error, result) => {
-        res.json(result.rows);
-    });
+app.get("/products", (req, res) => {
+    const productNameQuery = req.query.name;
+    let query = 'select products.product_name, supplier_name from products join suppliers on products.supplier_id = suppliers.id' 
+    if(productNameQuery) query = `select products.product_name, supplier_name from products join suppliers on products.supplier_id = suppliers.id and products.product_name like '%${productNameQuery}%'`  
+    pool.query(query)
+    .then(result => res.json(result.rows))
+    .catch(e => console.error(e));
 });
 
 app.listen(4000, function() {
-    console.log("Server is listening on port 3000. Ready to accept requests!");
+    console.log("Server is listening on port 4000. Ready to accept requests!");
 });
