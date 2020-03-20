@@ -17,6 +17,12 @@ app.get("/customers", function(req, res) {
         res.json(result.rows);
     });
 });
+app.get("/customers/:customerId",(req,res) => {
+    const customerId = req.params.customerId
+    pool.query('select * from  customers where id = $1',[customerId])
+    .then(result => res.json(result.rows))
+    .catch(e => console.error(e))
+});
 
 app.get("/suppliers", function(req, res) {
     pool.query('SELECT * FROM suppliers', (error, result) => {
